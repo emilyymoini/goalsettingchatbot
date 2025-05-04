@@ -1,10 +1,12 @@
 import os
 from flask import Flask, render_template, request, jsonify
 from dotenv import load_dotenv
-import openai
+import anthropic
 
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
+
+# Initialize Anthropic client
+anthropic_client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 app = Flask(__name__)
 
@@ -18,15 +20,13 @@ def chat():
     if not user_message:
         return jsonify({"response": "Please enter a message."})
     try:
-        response = openai.chat.completions.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": "You are a supportive and ambitious goal-setting coach. Help users set, refine, and achieve their goals. Always encourage them to think bigger and provide actionable advice."},
-                {"role": "user", "content": user_message}
-            ],
-            temperature=0.7,
-        )
-        reply = response.choices[0].message.content
+        response = anthropic_client.completions.create(
+    model="claude-2",
+    max_tokens_to_sample=1000,
+    temperature=0.7,
+    prompt=f"""System: You are a goal-setting coach focused on helping users set and achieve ambitious goals.\\nYour approach includes:\\n1. Helping users set clear, measurable goals\\n2. Encouraging users to think bigger and be more ambitious\\n3. Providing constructive feedback on goal alignment\\n4. Maintaining a supportive and motivating tone\\n\\nHuman: {user_message}\\n\\nAssistant:"""
+)
+        reply = response.completion
     except Exception as e:
         reply = f"Error: {str(e)}"
     return jsonify({"response": reply})

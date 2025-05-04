@@ -13,17 +13,33 @@ An intelligent chatbot that helps you set and achieve ambitious goals through:
    ```
    pip install -r requirements.txt
    ```
-3. Create a `.env` file with your OpenAI API key:
+3. Create a `.env` file with your Anthropic API key:
    ```
-   OPENAI_API_KEY=your_api_key_here
+   ANTHROPIC_API_KEY=your_api_key_here
    ```
 4. Run the application:
    ```
-   streamlit run app.py
+   python flask_app.py
    ```
+5. Open your browser and navigate to `http://localhost:5001`
 
 ## Features
 - Set and manage goals at different time scales
 - Get AI-powered feedback on your goals
-- Visual goal tracking
 - Goal alignment suggestions
+- Interactive chat interface
+
+## Technical Details
+- Built with Flask for the web interface
+- Uses Anthropic's Claude API for intelligent goal setting
+- Modern, responsive web design
+- Real-time chat interactions
+
+## Future Features
+- Goal progress tracking
+- Accountability mechanisms
+- Coaching for goal recovery
+- Enhanced goal visualization
+
+## Contributing
+Feel free to submit issues and enhancement requests!

@@ -1,14 +1,14 @@
 import os
 import json
 from datetime import datetime
-import openai
+import anthropic
 from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
 
-# Configure OpenAI
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Configure Anthropic
+anthropic_client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 class GoalSettingChatbot:
     def __init__(self):
@@ -41,22 +41,17 @@ class GoalSettingChatbot:
         return False
 
     def get_chatbot_response(self, prompt, context=""):
-        """Get response from OpenAI's GPT model"""
+        """Get response from Claude"""
         try:
-            response = openai.ChatCompletion.create(
-                model="gpt-4",
-                messages=[
-                    {"role": "system", "content": """You are a goal-setting coach focused on helping users set and achieve ambitious goals.
-                    Your approach includes:
-                    1. Helping users set clear, measurable goals
-                    2. Encouraging users to think bigger and be more ambitious
-                    3. Providing constructive feedback on goal alignment
-                    4. Maintaining a supportive and motivating tone"""},
-                    {"role": "user", "content": f"{context}\n\nUser input: {prompt}"}
-                ],
+            full_prompt = f"{context}\n\nUser input: {prompt}"
+            
+            response = anthropic_client.completions.create(
+                model="claude-2",
+                max_tokens=1000,
                 temperature=0.7,
+                prompt=f"\n\nHuman: You are a goal-setting coach focused on helping users set and achieve ambitious goals.\nYour approach includes:\n1. Helping users set clear, measurable goals\n2. Encouraging users to think bigger and be more ambitious\n3. Providing constructive feedback on goal alignment\n4. Maintaining a supportive and motivating tone\n\n{full_prompt}\n\nAssistant:",
             )
-            return response.choices[0].message.content
+            return response.completion
         except Exception as e:
             return f"Error: {str(e)}"
 
